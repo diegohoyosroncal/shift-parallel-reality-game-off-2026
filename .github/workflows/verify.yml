@@ -1,0 +1,17 @@
+name: Game Off 2026 — Test playable release
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test standalone HTML and puzzle completion
+        run: node --test tests/test_release.cjs
