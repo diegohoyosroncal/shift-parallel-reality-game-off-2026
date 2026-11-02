@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#080d1b">
+<title>SHIFT: Parallel Reality | Game Off 2026</title>
+<style>
+:root{color-scheme:dark;--ink:#e9f3ff;--dim:#9eb0d1;--line:#293858;--a:#52e6ce;--b:#e9a1ff}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse 95% 60% at 30% -18%,#263a70 0%,transparent 75%),#080d1b;color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;justify-content:center}main{width:min(1032px,100%);padding:25px 16px 34px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.eyebrow{color:var(--a);text-transform:uppercase;letter-spacing:.24em;font-size:11px;font-weight:800}h1{margin:6px 0 3px;font-size:clamp(27px,4.4vw,42px);font-weight:900;letter-spacing:-.06em;line-height:1.07}.sub{color:var(--dim);margin:6px 0 19px;font-size:13px}.status{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.badge{font-weight:700;font-size:12px;border:1px solid var(--line);background:#141e35;padding:9px 13px;border-radius:30px}.badge em{font-style:normal;color:var(--a)}button{font:inherit;cursor:pointer;color:var(--ink);border:1px solid #405170;background:#16233e;border-radius:11px;padding:10px 14px;touch-action:manipulation}button:hover{background:#203357}button:focus-visible{outline:3px solid #fff;outline-offset:2px}.game{position:relative;padding:10px;border:1px solid #283955;background:linear-gradient(140deg,#111b31,#0b1528);border-radius:20px;box-shadow:0 24px 65px #01030c80}canvas{display:block;width:100%;aspect-ratio:900/586;border-radius:13px;background:#0c152b;touch-action:none}.footer{display:grid;grid-template-columns:1fr auto;gap:17px;align-items:center;margin-top:17px}.hint{font-size:13px;line-height:1.8;color:#afbdd8}.key{display:inline-block;background:#182742;border:1px solid #3f526f;color:#dfeaff;font-size:11px;padding:0 6px;border-radius:5px;min-width:22px;text-align:center}.controls{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.mobile{display:none;align-items:center;justify-content:center;gap:10px;margin-top:15px}.mobile .dpad{display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,46px);gap:4px}.mobile button{padding:0;min-width:47px;min-height:45px;font-weight:900}.mobile .shift{height:96px;min-width:125px;background:#1d3c4c;border-color:#37b99e}.legend{display:flex;flex-wrap:wrap;gap:15px;color:#a4b6d4;font-size:12px;line-height:1.6;margin-top:13px}.dot{display:inline-block;width:9px;height:9px;margin-right:6px;border-radius:50%;background:#52e6ce}.dot.b{background:#e9a1ff}.dot.c{background:#ffcc6e}.toast{min-height:20px;font-size:13px;color:#ffd48b;font-weight:700}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}@media(max-width:760px){main{padding:16px 10px 24px}.game{padding:5px;border-radius:11px}canvas{border-radius:7px}.footer{display:block}.controls{justify-content:flex-start;margin-top:8px}.mobile{display:flex}.hint{line-height:2}.badge{font-size:11px;padding:7px 10px}.status{gap:6px}}
+</style>
+</head>
+<body><main>
+<div class="top"><div><div class="eyebrow">GAME OFF 2026 · SHIFT</div><h1>PARALLEL <span style="color:var(--a)">REALITY</span></h1><p class="sub">Dos mundos. Un camino. Cambia la realidad para alcanzar la salida.</p></div><div class="status"><div class="badge">FASE <em id="worldLabel">01 / LÚMINA</em></div><div class="badge">NIVEL <em id="levelLabel">1 / 4</em></div><div class="badge">NÚCLEOS <em id="orbLabel">0 / 2</em></div></div></div>
+<section class="game" aria-label="Juego SHIFT: Parallel Reality"><canvas id="board" width="900" height="586" role="img" aria-label="Tablero del juego, controlado con teclado o botones táctiles"></canvas></section>
+<div class="footer"><div><div class="hint">Mover <span class="key">W</span> <span class="key">A</span> <span class="key">S</span> <span class="key">D</span> / <span class="key">↑</span> <span class="key">←</span> <span class="key">↓</span> <span class="key">→</span> · Cambiar mundo <span class="key">ESPACIO</span> o <span class="key">SHIFT</span> · Reiniciar <span class="key">R</span></div><div class="toast" id="toast" aria-live="polite">Recoge los núcleos de ambos mundos y llega al portal.</div></div><div class="controls"><button id="mute" aria-label="Activar o silenciar sonidos">🔊 Audio</button><button id="reset">↻ Reiniciar</button><button id="next" hidden>→ Siguiente nivel</button></div></div>
+<div class="mobile" aria-label="Controles táctiles"><div class="dpad"><div></div><button data-action="up" aria-label="Arriba">▲</button><div></div><button data-action="left" aria-label="Izquierda">◀</button><button data-action="down" aria-label="Abajo">▼</button><button data-action="right" aria-label="Derecha">▶</button></div><button class="shift" data-action="shift">⇧ CAMBIAR<br>MUNDO</button></div>
+<div class="legend"><span><i class="dot"></i>Realidad Lúmina</span><span><i class="dot b"></i>Realidad Umbra</span><span><i class="dot c"></i>Núcleos que debes recoger</span><span>🌀 Portal de salida · 4 niveles · Funciona sin conexión</span></div>
+</main><script>
+/* SHIFT: Parallel Reality — self-contained rules, usable in browser and Node. */
+(function (root, factory) {
+  const core = factory();
+  if (typeof module !== 'undefined' && module.exports) module.exports = core;
+  if (root) root.ShiftCore = core;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const LEVELS = [
+    {name:'EL UMBRAL', hint:'La luz cambia de mundo. Recoge ambos núcleos.', map:[
+      '#################',
+      '#S....a.........#',
+      '#.#######.#####.#',
+      '#...1...#.......#',
+      '###.###.#.#####.#',
+      '#.......a.......#',
+      '#.#####.#.#####.#',
+      '#...2...b.......#',
+      '#.#####.#.#####.#',
+      '#..............E#',
+      '#################']},
+    {name:'LA DOBLE LLAVE', hint:'Algunas paredes existen en una sola realidad.', map:[
+      '#################',
+      '#S....#....1....#',
+      '#.###.a.###.##..#',
+      '#...#...#...#...#',
+      '###.#.###.#.#.#.#',
+      '#...#.....#.....#',
+      '#.#####b#####...#',
+      '#...2...#.......#',
+      '#.###.#.#.###...#',
+      '#.....#.......E.#',
+      '#################']},
+    {name:'DESFASE', hint:'El salto dimensional falla dentro de una pared.', map:[
+      '#################',
+      '#S..a...#....2..#',
+      '#.#####.#.#####.#',
+      '#...#...b.......#',
+      '###.#.#####.###.#',
+      '#...#......a....#',
+      '#.###.#######.#.#',
+      '#.....#..1....#.#',
+      '#.###.b..###.##.#',
+      '#..............E#',
+      '#################']},
+    {name:'NEXO', hint:'Dos realidades, una única salida.', map:[
+      '#################',
+      '#S.....a...#...E#',
+      '#.###.#####.#.#.#',
+      '#...#...2...#...#',
+      '###.#.#####.###.#',
+      '#...#.....b.....#',
+      '#.#####.###.###.#',
+      '#..1....#..2....#',
+      '#.###.###.#####.#',
+      '#...............#',
+      '#################']}
+  ];
+  function isWall(cell, world) {return cell === '#' || (world === 0 && cell === 'a') || (world === 1 && cell === 'b');}
+  function parseLevel(level) {
+    const rows = level.map, w = rows[0].length, h = rows.length;
+    if (!rows.every(r => r.length === w)) throw new Error('Level rows have inconsistent widths: ' + level.name);
+    const orbs = []; let start=null, exit=null;
+    for (let y=0;y<h;y++) for(let x=0;x<w;x++) {
+      const c=rows[y][x];
+      if(c==='S') start={x,y};
+      if(c==='E') exit={x,y};
+      if(c==='1'||c==='2') orbs.push({x,y,world:Number(c)-1});
+    }
+    if(!start||!exit||!orbs.length) throw new Error('Invalid level: '+level.name);
+    return {...level, rows, w, h, start, exit, orbs};
+  }
+  function makeState(levelIndex=0) {
+    const level=parseLevel(LEVELS[levelIndex]);
+    return { levelIndex, x:level.start.x, y:level.start.y, world:0, collected:0, moves:0, shifts:0, won:false, finished:false, feedback:'' };
+  }
+  function tile(level,x,y){ return x<0||y<0||x>=level.w||y>=level.h?'#':level.rows[y][x]; }
+  function pickup(s, level){
+    level.orbs.forEach((orb,i)=>{if(orb.x===s.x&&orb.y===s.y&&orb.world===s.world) s.collected |= (1<<i);});
+  }
+  function advance(state, action){
+    const level=parseLevel(LEVELS[state.levelIndex]);
+    const s={...state,feedback:''};
+    if(s.won || s.finished)return s;
+    if(action==='shift'){
+      const target=1-s.world;
+      if(isWall(tile(level,s.x,s.y),target)){s.feedback='DESFASE BLOQUEADO'; return s;}
+      s.world=target; s.shifts++; pickup(s,level);
+    } else {
+      const d={left:[-1,0],right:[1,0],up:[0,-1],down:[0,1]}[action];
+      if(!d)return s;
+      const nx=s.x+d[0],ny=s.y+d[1];
+      if(isWall(tile(level,nx,ny),s.world)){s.feedback='MURO EN ESTA REALIDAD';return s;}
+      s.x=nx;s.y=ny;s.moves++;pickup(s,level);
+    }
+    const all=(1<<level.orbs.length)-1;
+    if(s.x===level.exit.x&&s.y===level.exit.y){
+      if(s.collected===all){s.won=true;s.feedback='NIVEL SUPERADO';}
+      else s.feedback='FALTAN NÚCLEOS';
+    }
+    return s;
+  }
+  function solve(levelIndex=0){
+    const initial=makeState(levelIndex),level=parseLevel(LEVELS[levelIndex]),all=(1<<level.orbs.length)-1;
+    const queue=[{s:initial,path:[]}],seen=new Set(),acts=['up','down','left','right','shift'];
+    for(let i=0;i<queue.length;i++){
+      const {s,path}=queue[i],key=[s.x,s.y,s.world,s.collected].join(':');
+      if(seen.has(key))continue;seen.add(key);
+      if(s.x===level.exit.x&&s.y===level.exit.y&&s.collected===all)return path;
+      for(const a of acts){ const n=advance(s,a); if(n.x!==s.x||n.y!==s.y||n.world!==s.world||n.collected!==s.collected)queue.push({s:n,path:path.concat(a)});}
+    }
+    return null;
+  }
+  return {LEVELS,parseLevel,isWall,tile,makeState,advance,solve};
+});
+
+</script>
+<script>
+(function () {
+  'use strict';
+  const C=window.ShiftCore,canvas=document.getElementById('board'),g=canvas.getContext('2d');
+  const worldLabel=document.getElementById('worldLabel'),levelLabel=document.getElementById('levelLabel'),orbLabel=document.getElementById('orbLabel'),toast=document.getElementById('toast'),next=document.getElementById('next');
+  let s=C.makeState(),muted=false,audio=null,clock=0,announcement=0;
+  const W=canvas.width,H=canvas.height,TS=43,DX=(W-17*TS)/2,DY=(H-11*TS)/2;
+  const themes=[{base:'#071d27',wall:'#123c49',edge:'#237481',glow:'#53e8ca',deep:'#042831'},{base:'#1d102c',wall:'#46254f',edge:'#87498e',glow:'#e6a1ff',deep:'#2b1134'}];
+  function sound(freq=440,duration=.08,type='sine'){
+    if(muted)return;
+    try{audio ||= new (window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),v=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,audio.currentTime);v.gain.setValueAtTime(.04,audio.currentTime);v.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);o.connect(v);v.connect(audio.destination);o.start();o.stop(audio.currentTime+duration);}catch(_e){}
+  }
+  const rounded=(x,y,w,h,r)=>{g.beginPath();g.roundRect(x,y,w,h,r);};
+  function label(txt,x,y,size=14,color='#fff',align='left',weight=700){g.fillStyle=color;g.textAlign=align;g.font=`${weight} ${size}px system-ui, sans-serif`;g.fillText(txt,x,y);}
+  function syncUI(){
+    const l=C.parseLevel(C.LEVELS[s.levelIndex]);worldLabel.textContent=s.world?'02 / UMBRA':'01 / LÚMINA';worldLabel.style.color=themes[s.world].glow;
+    levelLabel.textContent=(s.levelIndex+1)+' / '+C.LEVELS.length;
+    orbLabel.textContent=bitCount(s.collected)+' / '+l.orbs.length;
+    next.hidden=!s.won;
+    next.textContent=s.levelIndex===C.LEVELS.length-1?'↻ Volver a jugar':'→ Siguiente nivel';
+    toast.textContent=s.won?(s.levelIndex===C.LEVELS.length-1?'¡ESCAPASTE DE LAS DOS REALIDADES!':'Portal abierto. Continúa al siguiente nivel.'):s.feedback||l.hint;
+  }
+  function bitCount(n){let r=0;while(n){r+=n&1;n>>=1;}return r;}
+  function act(action){if(s.won){if(action==='shift') nextLevel();return;}const before=s; s=C.advance(s,action);if(s.world!==before.world){sound(s.world?350:520,.2,'triangle');announcement=clock+35;}else if(s.collected!==before.collected)sound(800,.23);else if(s.x!==before.x||s.y!==before.y)sound(240,.027);else sound(110,.035);if(s.won)sound(920,.5);syncUI();}
+  function nextLevel(){s=C.makeState((s.levelIndex+1)%C.LEVELS.length);syncUI();sound(660,.2);}
+  function reset(){s=C.makeState(s.levelIndex);syncUI();sound(510,.1);}
+  function draw(time){
+    clock=time/16.66;const t=themes[s.world],l=C.parseLevel(C.LEVELS[s.levelIndex]);
+    g.fillStyle=t.base;g.fillRect(0,0,W,H);
+    const bg=g.createRadialGradient(W*.5,H*.4,45,W*.5,H*.45,W*.8);bg.addColorStop(0,t.deep);bg.addColorStop(1,t.base);g.fillStyle=bg;g.fillRect(0,0,W,H);
+    for(let i=0;i<36;i++){const x=(i*197+31)%W,y=(i*139+91)%H;g.globalAlpha=.11+.08*Math.sin(clock*.02+i);g.fillStyle=t.glow;g.fillRect(x,y,2,2);}g.globalAlpha=1;
+    rounded(DX-12,DY-12,l.w*TS+24,l.h*TS+24,16);g.fillStyle='#050b16';g.fill();g.strokeStyle=t.edge;g.lineWidth=1;g.stroke();
+    for(let y=0;y<l.h;y++)for(let x=0;x<l.w;x++){
+      const c=l.rows[y][x],xx=DX+x*TS,yy=DY+y*TS,solid=C.isWall(c,s.world),other=C.isWall(c,1-s.world);
+      g.fillStyle=(x+y)%2===0?t.base:t.deep;g.fillRect(xx+1,yy+1,TS-2,TS-2);
+      if(solid){g.fillStyle=t.wall;rounded(xx+2,yy+2,TS-4,TS-4,5);g.fill();g.fillStyle=t.edge;rounded(xx+4,yy+4,TS-8,5,2);g.fill();}
+      else if(other){g.strokeStyle=t.glow;g.globalAlpha=.26;g.lineWidth=1;rounded(xx+5,yy+5,TS-10,TS-10,4);g.stroke();g.globalAlpha=1;}
+      if(c==='E'){
+        const phase=Math.sin(clock*.055)*3;g.strokeStyle='#ffd27e';g.lineWidth=3;g.beginPath();g.ellipse(xx+TS/2,yy+TS/2,13+phase,16+phase,0,0,Math.PI*2);g.stroke();g.fillStyle='#ffde9e';g.globalAlpha=.24;g.beginPath();g.arc(xx+TS/2,yy+TS/2,9+phase,0,Math.PI*2);g.fill();g.globalAlpha=1;
+      }
+    }
+    for(let i=0;i<l.orbs.length;i++){
+      const orb=l.orbs[i];if(s.collected&(1<<i))continue;
+      const xx=DX+(orb.x+.5)*TS,yy=DY+(orb.y+.5)*TS;
+      const a=orb.world===s.world?1:.22;g.globalAlpha=a;
+      g.shadowBlur=18;g.shadowColor=orb.world===0?'#f9de7f':'#f7baff';g.fillStyle=orb.world===0?'#ffdf80':'#e9a1ff';g.save();g.translate(xx,yy+Math.sin(clock*.06+i)*3);g.rotate(Math.PI/4);rounded(-9,-9,18,18,4);g.fill();g.restore();g.shadowBlur=0;g.globalAlpha=1;
+    }
+    const px=DX+(s.x+.5)*TS,py=DY+(s.y+.5)*TS;
+    g.shadowBlur=22;g.shadowColor=t.glow;g.fillStyle=t.glow;rounded(px-14,py-14,28,28,9);g.fill();g.shadowBlur=0;
+    g.fillStyle='#081721';rounded(px-9,py-8,18,17,5);g.fill();g.fillStyle=t.glow;g.fillRect(px-6,py-4,4,4);g.fillRect(px+3,py-4,4,4);g.fillRect(px-3,py+5,6,2);
+    g.fillStyle='#0a1223';g.globalAlpha=.8;g.fillRect(0,0,W,31);g.globalAlpha=1;label(C.LEVELS[s.levelIndex].name,DX,21,12,t.glow);label('MOVIMIENTOS '+s.moves+'   ·   CAMBIOS '+s.shifts,W-DX,21,12,'#b0c7d6','right');
+    if(clock<announcement){g.fillStyle=t.glow;g.globalAlpha=.15*Math.max(0,(announcement-clock)/35);g.fillRect(0,0,W,H);g.globalAlpha=1;}
+    if(s.won){g.fillStyle='#040915ce';g.fillRect(0,0,W,H);label('NIVEL COMPLETADO',W/2,H/2-39,33,'#fff','center',900);label(`${s.moves} pasos · ${s.shifts} cambios de realidad`,W/2,H/2+3,16,'#c1d2e4','center');label('Pulsa el botón SIGUIENTE NIVEL o SHIFT',W/2,H/2+40,15,t.glow,'center');}
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('keydown',e=>{
+    const a=({ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',a:'left',s:'down',d:'right',W:'up',A:'left',S:'down',D:'right',' ':'shift',Shift:'shift'})[e.key];
+    if(a){e.preventDefault();if(!e.repeat)act(a);}else if(e.key.toLowerCase()==='r'){e.preventDefault();reset();}
+  });
+  document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>act(b.dataset.action)));
+  document.getElementById('reset').addEventListener('click',reset);
+  document.getElementById('next').addEventListener('click',nextLevel);
+  document.getElementById('mute').addEventListener('click',e=>{muted=!muted;e.currentTarget.textContent=muted?'🔇 Silencio':'🔊 Audio';});
+  let start=null;canvas.addEventListener('pointerdown',e=>{start={x:e.clientX,y:e.clientY};});
+  canvas.addEventListener('pointerup',e=>{if(!start)return;const dx=e.clientX-start.x,dy=e.clientY-start.y;if(Math.max(Math.abs(dx),Math.abs(dy))>22)act(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'));else act('shift');start=null;});
+  syncUI();requestAnimationFrame(draw);
+})();
+
+</script></body></html>
