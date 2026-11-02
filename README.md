@@ -2,6 +2,8 @@
 
 Juego de rompecabezas 2D para navegador, creado para **GitHub Game Off 2026** (tema: **SHIFT**).
 
+**Jugar online (versión pública):** https://shift-parallel-reality-game-off-2026-ew6fp38ym.vercel.app/
+
 ## Jugar
 
 Abre `index.html` en un navegador moderno. Funciona sin conexión, sin dependencias externas y sin instalar nada.
